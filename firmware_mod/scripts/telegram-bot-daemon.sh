@@ -4,6 +4,20 @@ CURL="/system/sdcard/bin/curl"
 LASTUPDATEFILE="/tmp/last_update_id"
 TELEGRAM="/system/sdcard/bin/telegram"
 JQ="/system/sdcard/bin/jq"
+HELP_STR="######### Bot commands #########\n\
+# /mem - show memory information\n\
+# /shot - take a shot\n\
+# /on - motion detect on\n\
+# /off - motion detect off\n\
+# /textalerts - Text alerts on motion detection\n\
+# /imagealerts - Image alerts on motion detection\n\
+# /status - motion detect status\n\
+# /sound - play dog sound\n\
+# /motorup\n\
+# /motordown\n\
+# /motorleft\n\
+# /motorright\n\
+# /reboot - reboot"
 
 . /system/sdcard/config/telegram.conf
 [ -z $apiToken ] && echo "api token not configured yet" && exit 1
@@ -15,6 +29,25 @@ sendShot() {
   rm "/tmp/telegram_image.jpg"
 }
 
+motorUp() {
+  motor up 100
+}
+
+motorDown() {
+  motor down 100
+}
+
+motorLeft() {
+  motor left 100
+}
+
+motorRight() {
+  motor right 100
+}
+
+sendStatus() {
+  $TELEGRAM m $chatId "Motion status = $(motion_detection status)"
+}
 sendMem() {
   $TELEGRAM m $(free -k | awk '/^Mem/ {print "Mem: used "$3" free "$4} /^Swap/ {print "Swap: used "$3}')
 }
@@ -41,19 +74,31 @@ imageAlerts() {
   $TELEGRAM m "Image alerts on motion detection"
 }
 
+playSound() {
+  /system/sdcard/bin/audioplay /system/sdcard/media/dog.wav 100 &
+}
+
 respond() {
+#  log "respond"
+#  log "respond to: $chatId"
   case $1 in
+    /sound) playSound;;
+    /status) sendStatus;;
     /mem) sendMem;;
     /shot) sendShot;;
     /on) detectionOn;;
     /off) detectionOff;;
     /textalerts) textAlerts;;
     /imagealerts) imageAlerts;;
-    /help) $TELEGRAM m "######### Bot commands #########\n# /mem - show memory information\n# /shot - take a shot\n# /on - motion detect on\n# /off - motion detect off\n# /textalerts - Text alerts on motion detection\n# /imagealerts - Image alerts on motion detection";;
-    *) $TELEGRAM m "I can't respond to '$1' command"
+    /reboot) reboot;;
+    /motorup) motorUp;;
+    /motordown) motorDown;;
+    /motorleft) motorLeft;;
+    /motorright) motorRight;;
+    /help) $TELEGRAM m $chatId $HELP_STR;;
+    *) $TELEGRAM m $chatId "I can't respond to '$1' command"
   esac
 }
-
 readNext() {
   lastUpdateId=$(cat $LASTUPDATEFILE || echo "0")
   json=$($CURL -s -X GET "https://api.telegram.org/bot$apiToken/getUpdates?offset=$lastUpdateId&limit=1&allowed_updates=message")
@@ -88,6 +133,21 @@ main() {
   else
     respond $cmd
   fi;
+
+### Replace if above with text below to accept multiple chatids.
+### They must be configured in telegram.conf like this (replace values): userChatId=("123456789" "-987654111") 
+#  . /wobeto/imports.sh
+#  containsElement "$chatId" "${userChatId[@]}"
+#  local result=$?
+#  log $result
+#  if [ $result -ne 1 ]; then
+#    username=$(echo "$json" | $JQ -r '.result[0].message.from.username // ""')
+#    firstName=$(echo "$json" | $JQ -r '.result[0].message.from.first_name // ""')
+#    $TELEGRAM m $chatId "Received message from not authrized chat: $chatId\nUser: $username($firstName)\nMessage: $cmd"
+#  else
+#    log "Responding $cmd"
+#    respond $cmd
+#  fi;
 
   markAsRead $updateId
 }
