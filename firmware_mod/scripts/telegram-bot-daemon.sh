@@ -1,4 +1,5 @@
 #!/bin/sh
+. /system/sdcard/scripts/common_functions.sh
 
 CURL="/system/sdcard/bin/curl"
 LASTUPDATEFILE="/tmp/last_update_id"
@@ -47,30 +48,26 @@ motorRight() {
 }
 
 sendStatus() {
-  $TELEGRAM m $chatId "Motion status = $(motion_detection status)"
+  $TELEGRAM m "Motion status = $(motion_detection status)"
 }
 sendMem() {
   $TELEGRAM m $(free -k | awk '/^Mem/ {print "Mem: used "$3" free "$4} /^Swap/ {print "Swap: used "$3}')
 }
 
 detectionOn() {
-  . /system/sdcard/scripts/common_functions.sh
   motion_detection on && $TELEGRAM m "Motion detection started"
 }
 
 detectionOff() {
-  . /system/sdcard/scripts/common_functions.sh
   motion_detection off && $TELEGRAM m "Motion detection stopped"
 }
 
 textAlerts() {
-  . /system/sdcard/scripts/common_functions.sh
-  rewrite_config /system/sdcard/config/telegram.conf telegram_alert_type "text"
+  $COMMON_FUNCTIONS rewrite_config /system/sdcard/config/telegram.conf telegram_alert_type "text"
   $TELEGRAM m "Text alerts on motion detection"
 }
 
 imageAlerts() {
-  . /system/sdcard/scripts/common_functions.sh
   rewrite_config /system/sdcard/config/telegram.conf telegram_alert_type "image"
   $TELEGRAM m "Image alerts on motion detection"
 }
@@ -80,7 +77,7 @@ playSound() {
 }
 
 reboot() {
-  $TELEGRAM m $chatId "Rebooting in 60 seconds..."
+  $TELEGRAM m "Rebooting in 60 seconds..."
   /sbin/reboot -d 60 &
 }
 
@@ -101,8 +98,8 @@ respond() {
     /motordown) motorDown;;
     /motorleft) motorLeft;;
     /motorright) motorRight;;
-    /help) $TELEGRAM m $chatId $HELP_STR;;
-    *) $TELEGRAM m $chatId "I can't respond to '$1' command"
+    /help) $TELEGRAM m $HELP_STR;;
+    *) $TELEGRAM m "I can't respond to '$1' command"
   esac
 }
 readNext() {
