@@ -63,7 +63,7 @@ detectionOff() {
 }
 
 textAlerts() {
-  $COMMON_FUNCTIONS rewrite_config /system/sdcard/config/telegram.conf telegram_alert_type "text"
+  rewrite_config /system/sdcard/config/telegram.conf telegram_alert_type "text"
   $TELEGRAM m "Text alerts on motion detection"
 }
 
