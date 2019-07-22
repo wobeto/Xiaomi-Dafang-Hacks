@@ -4,6 +4,7 @@ CURL="/system/sdcard/bin/curl"
 LASTUPDATEFILE="/tmp/last_update_id"
 TELEGRAM="/system/sdcard/bin/telegram"
 JQ="/system/sdcard/bin/jq"
+
 HELP_STR="######### Bot commands #########\n\
 # /mem - show memory information\n\
 # /shot - take a shot\n\
@@ -76,6 +77,11 @@ imageAlerts() {
 
 playSound() {
   /system/sdcard/bin/audioplay /system/sdcard/media/dog.wav 100 &
+}
+
+reboot() {
+  $TELEGRAM m $chatId "Rebooting in 60 seconds..."
+  /sbin/reboot -d 60 &
 }
 
 respond() {
