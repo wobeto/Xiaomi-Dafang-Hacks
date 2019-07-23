@@ -19,6 +19,7 @@ HELP_STR="######### Bot commands #########\n\
 # /motordown\n\
 # /motorleft\n\
 # /motorright\n\
+# /motorcalibrate\n\
 # /reboot - reboot"
 
 . /system/sdcard/config/telegram.conf
@@ -45,6 +46,10 @@ motorLeft() {
 
 motorRight() {
   motor right 100
+}
+
+motorCalibrate() {
+  motor reset_pos_count
 }
 
 sendStatus() {
@@ -85,8 +90,6 @@ respond() {
 #  log "respond"
 #  log "respond to: $chatId"
   case $1 in
-    /sound) playSound;;
-    /status) sendStatus;;
     /mem) sendMem;;
     /shot) sendShot;;
     /on) detectionOn;;
@@ -98,10 +101,14 @@ respond() {
     /motordown) motorDown;;
     /motorleft) motorLeft;;
     /motorright) motorRight;;
+    /motorcalibrate) motorCalibrate;;
+    /sound) playSound;;
+    /status) sendStatus;;
     /help) $TELEGRAM m $HELP_STR;;
     *) $TELEGRAM m "I can't respond to '$1' command"
   esac
 }
+
 readNext() {
   lastUpdateId=$(cat $LASTUPDATEFILE || echo "0")
   json=$($CURL -s -X GET "https://api.telegram.org/bot$apiToken/getUpdates?offset=$lastUpdateId&limit=1&allowed_updates=message")
