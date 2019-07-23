@@ -5,6 +5,7 @@ CURL="/system/sdcard/bin/curl"
 LASTUPDATEFILE="/tmp/last_update_id"
 TELEGRAM="/system/sdcard/bin/telegram"
 JQ="/system/sdcard/bin/jq"
+AUDIOPLAY="/system/sdcard/bin/audioplay"
 
 HELP_STR="######### Bot commands #########\n\
 # /mem - show memory information\n\
@@ -78,7 +79,7 @@ imageAlerts() {
 }
 
 playSound() {
-  /system/sdcard/bin/audioplay /system/sdcard/media/dog.wav 100 &
+  $AUDIOPLAY /system/sdcard/media/dog.wav 100 &
 }
 
 reboot() {
