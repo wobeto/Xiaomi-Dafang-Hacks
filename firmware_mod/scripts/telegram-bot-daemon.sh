@@ -158,5 +158,5 @@ main() {
 while true; do
   main >/dev/null 2>&1
   [ $? -gt 0 ] && exit 1
-  sleep 2
+  sleep 1
 done;
