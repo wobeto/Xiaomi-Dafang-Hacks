@@ -10,8 +10,8 @@ AUDIOPLAY="/system/sdcard/bin/audioplay"
 HELP_STR="######### Bot commands #########\n\
 # /mem - show memory information\n\
 # /shot - take a shot\n\
-# /on - motion detect on\n\
-# /off - motion detect off\n\
+# /detectionon - motion detect on\n\
+# /detectionoff - motion detect off\n\
 # /textalerts - Text alerts on motion detection\n\
 # /imagealerts - Image alerts on motion detection\n\
 # /status - motion detect status\n\
@@ -87,14 +87,20 @@ reboot() {
   /sbin/reboot -d 60 &
 }
 
+update() {
+  $TELEGRAM m "Starting update process. It will take several minutes before it is\
+  completed and you won't be notified when it ends. When it ends the camera will reboot."
+  /system/sdcard/bin/busybox nohup /system/sdcard/autoupdate.sh -v -f
+}
+
 respond() {
 #  log "respond"
 #  log "respond to: $chatId"
   case $1 in
     /mem) sendMem;;
     /shot) sendShot;;
-    /on) detectionOn;;
-    /off) detectionOff;;
+    /detectionon) detectionOn;;
+    /detectionoff) detectionOff;;
     /textalerts) textAlerts;;
     /imagealerts) imageAlerts;;
     /reboot) reboot;;
@@ -105,6 +111,7 @@ respond() {
     /motorcalibrate) motorCalibrate;;
     /sound) playSound;;
     /status) sendStatus;;
+    /update) update;;
     /help) $TELEGRAM m $HELP_STR;;
     *) $TELEGRAM m "I can't respond to '$1' command"
   esac
