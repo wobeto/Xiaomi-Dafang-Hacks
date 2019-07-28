@@ -81,8 +81,8 @@ imageAlerts() {
 
 motionSensitivity() {
   $TELEGRAM m "Setting motion sensitivity to: $1"
-  #rewrite_config /system/sdcard/config/motion.conf motion_sensitivity "$1"
-  #/system/sdcard/bin/setconf -k m -v $1
+  rewrite_config /system/sdcard/config/motion.conf motion_sensitivity "$1"
+  /system/sdcard/bin/setconf -k m -v $1
 }
 
 playSound() {
