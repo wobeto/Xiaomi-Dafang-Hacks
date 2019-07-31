@@ -14,6 +14,7 @@ HELP_STR="######### Bot commands #########\n\
 # /detectionoff - motion detect off\n\
 # /textalerts - Text alerts on motion detection\n\
 # /imagealerts - Image alerts on motion detection\n\
+# /videoalerts - Video alerts on motion detection\n\
 # /sensitivity # - Set motion detection sensitivity (0-4)\n\
 # /status - motion detect status\n\
 # /sound - play dog sound\n\
@@ -79,6 +80,11 @@ imageAlerts() {
   $TELEGRAM m "Image alerts on motion detection"
 }
 
+videoAlerts() {
+  rewrite_config /system/sdcard/config/telegram.conf telegram_alert_type "video"
+  $TELEGRAM m "Video alerts on motion detection"
+}
+
 motionSensitivity() {
   $TELEGRAM m "Setting motion sensitivity to: $1"
   rewrite_config /system/sdcard/config/motion.conf motion_sensitivity "$1"
@@ -110,6 +116,7 @@ respond() {
     /detectionoff) detectionOff;;
     /textalerts) textAlerts;;
     /imagealerts) imageAlerts;;
+    /videoalerts) videoAlerts;;
     /sensitivity) motionSensitivity $2;;
     /reboot) reboot;;
     /motorup) motorUp;;
