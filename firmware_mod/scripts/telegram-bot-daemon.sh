@@ -71,17 +71,17 @@ detectionOff() {
 }
 
 textAlerts() {
-  rewrite_config /system/sdcard/config/telegram.conf telegram_alert_type "text"
+  rewrite_config /system/sdcard/config/motion.conf telegram_alert_type "text"
   $TELEGRAM m "Text alerts on motion detection"
 }
 
 imageAlerts() {
-  rewrite_config /system/sdcard/config/telegram.conf telegram_alert_type "image"
+  rewrite_config /system/sdcard/config/motion.conf telegram_alert_type "image"
   $TELEGRAM m "Image alerts on motion detection"
 }
 
 videoAlerts() {
-  rewrite_config /system/sdcard/config/telegram.conf telegram_alert_type "video"
+  rewrite_config /system/sdcard/config/motion.conf telegram_alert_type "video"
   $TELEGRAM m "Video alerts on motion detection"
 }
 
