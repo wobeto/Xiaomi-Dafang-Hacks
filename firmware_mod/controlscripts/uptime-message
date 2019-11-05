@@ -1,0 +1,46 @@
+#!/bin/sh
+PIDFILE="/run/uptime-message"
+
+if [ ! -f /system/sdcard/config/telegram.conf ]; then
+  echo "You have to configure telegram first. Please see /system/sdcard/config/telegram.conf.dist for further instructions"
+fi
+
+status()
+{
+  pid="$(cat "$PIDFILE" 2>/dev/null)"
+  if [ "$pid" ]; then
+    kill -0 "$pid" >/dev/null && echo "PID: $pid" || return 1
+  fi
+}
+
+start()
+{
+  if [ -f $PIDFILE ]; then
+    echo "uptime-message service already running";
+  else
+    echo "Starting uptime-message service"
+    /system/sdcard/bin/busybox nohup /system/sdcard/scripts/uptime-message.sh >/dev/null 2>&1 &
+    echo "$!" > "$PIDFILE"
+  fi
+}
+
+stop()
+{
+  pid="$(cat "$PIDFILE" 2>/dev/null)"
+  if [ "$pid" ]; then
+    kill -9 "$pid"
+    rm "$PIDFILE"
+    echo "uptime-message service stopped"
+  else
+    echo "Could not find uptime-message service to stop."
+  fi
+}
+
+if [ $# -eq 0 ]; then
+  start
+else
+  case $1 in start|stop|status)
+      $1
+      ;;
+  esac
+fi
