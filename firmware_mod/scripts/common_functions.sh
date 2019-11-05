@@ -223,12 +223,21 @@ update_motor_pos(){
   update_axis
 }
 
-# Read the light sensor
+# Read the hw light sensor (hw in mqtt.conf)
 ldr(){
   case "$1" in
   status)
     brightness=$(dd if=/dev/jz_adc_aux_0 count=20 2> /dev/null |  sed -e 's/[^\.]//g' | wc -m)
     echo "$brightness"
+  esac
+}
+
+# Read the virtual light sensor (virtual in mqtt.conf)
+exposure(){
+  case "$1" in
+  status)
+    isp_exposure=$(grep 'ISP exposure log2 id:' /proc/jz/isp/isp_info  | sed 's/^.*: //')
+    echo "$isp_exposure"
   esac
 }
 
@@ -296,6 +305,66 @@ rtsp_mjpeg_server(){
     ;;
   status)
     if /system/sdcard/controlscripts/rtsp-mjpeg status | grep -q "PID"
+    then
+        echo "ON"
+    else
+        echo "OFF"
+    fi
+    ;;
+  esac
+}
+
+# Control the video recorder
+recording(){
+  case "$1" in
+  on)
+    /system/sdcard/controlscripts/recording start
+    ;;
+  off)
+    /system/sdcard/controlscripts/recording stop
+    ;;
+  status)
+    if /system/sdcard/controlscripts/recording status | grep -q "PID"
+    then
+        echo "ON"
+    else
+        echo "OFF"
+    fi
+    ;;
+  esac
+}
+
+# Control the ftp server
+ftp_server(){
+  case "$1" in
+  on)
+    /system/sdcard/controlscripts/ftp_server start
+    ;;
+  off)
+    /system/sdcard/controlscripts/ftp_server stop
+    ;;
+  status)
+    if /system/sdcard/controlscripts/ftp_server status | grep -q "PID"
+    then
+        echo "ON"
+    else
+        echo "OFF"
+    fi
+    ;;
+  esac
+}
+
+# Control the timelapse
+timelapse(){
+  case "$1" in
+  on)
+    /system/sdcard/controlscripts/timelapse start
+    ;;
+  off)
+    /system/sdcard/controlscripts/timelapse stop
+    ;;
+  status)
+    if /system/sdcard/controlscripts/timelapse status | grep -q "PID"
     then
         echo "ON"
     else
