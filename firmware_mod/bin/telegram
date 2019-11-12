@@ -59,10 +59,10 @@ sendAnimation() {
     -F caption="${caption}"
 }
 
-[ "$what" == "m" ] && sendMessage $data
-[ "$what" == "f" ] && sendFile $data
-[ "$what" == "p" ] && sendPhoto $data
-[ "$what" == "v" ] && sendVideo $data
-[ "$what" == "a" ] && sendAnimation $data
+[ "$what" == "m" ] && sendMessage $data && return $?
+[ "$what" == "f" ] && sendFile $data && return $?
+[ "$what" == "p" ] && sendPhoto $data && return $?
+[ "$what" == "v" ] && sendVideo $data && return $?
+[ "$what" == "a" ] && sendAnimation $data && return $?
 
 [ -z "$what" ] && echo -e "$0 <m|f|p|v|a> <data>\n m: message\n f: file\n p: picture\n v: video\n a: animation"
