@@ -23,7 +23,8 @@ HELP_STR="######### Bot commands #########\n\
 # /motorleft\n\
 # /motorright\n\
 # /motorcalibrate\n\
-# /reboot - reboot"
+# /reboot - reboot\n\
+# /uptime - uptime"
 
 . /system/sdcard/config/telegram.conf
 [ -z $apiToken ] && echo "api token not configured yet" && exit 1
@@ -106,7 +107,7 @@ update() {
   /system/sdcard/bin/busybox nohup /system/sdcard/autoupdate.sh -v -f
 }
 
-uptime() {
+uptimeFunction() {
 	$TELEGRAM m "$(uptime)"
 }
 
@@ -133,7 +134,7 @@ respond() {
     /sound) playSound;;
     /status) sendStatus;;
     /update) update;;
-    /uptime) uptime;;
+    /uptime) uptimeFunction;;
     /help) $TELEGRAM m $HELP_STR;;
     *) $TELEGRAM m "I can't respond to '$cmd' command"
   esac
